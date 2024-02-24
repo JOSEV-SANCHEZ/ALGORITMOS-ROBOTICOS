@@ -1,0 +1,295 @@
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+import numpy as np
+import cv2
+
+# PUNTO 1C
+
+# Datos de temperatura en °C
+temperatura = np.linspace(-200, 200, 401)
+
+# Función de resistencia para un sensor PT100
+def resistencia_pt100(temperatura):
+    return 100 * (1 + 0.00385 * temperatura)
+
+# Calcular la resistencia para cada temperatura
+resistencia = resistencia_pt100(temperatura)
+
+# Graficar la resistencia en función de la temperatura
+plt.figure(figsize=(10, 6))
+plt.plot(temperatura, resistencia, label='Sensor PT100')
+plt.xlabel('Temperatura (°C)')
+plt.ylabel('Resistencia (Ω)')
+plt.title('Comportamiento de un sensor PT100')
+plt.grid(True)
+plt.legend()
+plt.show()
+
+# -------------------------------------> PUNTO 2C <-------------------------------------
+
+# Función de transferencia de segundo orden
+def transferencia_segundo_orden(K, zeta, wn, t):
+    return K / (1 + 2*zeta*wn*t + wn*2*t*2)  # Calcula la función de transferencia
+
+# Solicitar al usuario los coeficientes de la función de transferencia
+K = float(input("Ingrese el valor de la ganancia estática K: "))  # Solicita el valor de K
+zeta = float(input("Ingrese el valor del coeficiente de amortiguamiento ζ: "))  # Solicita el valor de ζ
+wn = float(input("Ingrese el valor de la frecuencia natural no amortiguada ω_n: "))  # Solicita el valor de ω_n
+
+# Calcular el discriminante para determinar el tipo de sistema
+delta = 4*wn**2 - 4*wn**2*zeta**2  # Calcula el discriminante
+
+# Determinar el tipo de sistema
+if delta > 0:
+    tipo_sistema = "sobreamortiguado"  # Asigna el tipo de sistema sobreamortiguado
+elif delta == 0:
+    tipo_sistema = "críticamente amortiguado"  # Asigna el tipo de sistema críticamente amortiguado
+else:
+    tipo_sistema = "subamortiguado"  # Asigna el tipo de sistema subamortiguado
+
+# Mostrar el tipo de sistema al usuario
+print(f"El sistema es {tipo_sistema}")  # Imprime el tipo de sistema por pantalla
+
+# Graficar la respuesta al escalón de la función de transferencia
+t = np.linspace(0, 10, 1000)  # Genera un arreglo de tiempo de 0 a 10 segundos con 1000 puntos
+respuesta = transferencia_segundo_orden(K, zeta, wn, t)  # Calcula la respuesta al escalón
+
+plt.figure(figsize=(12, 6))  # Crea una figura para graficar
+plt.plot(t, respuesta)  # Grafica la respuesta al escalón
+plt.xlabel('Tiempo')  # Etiqueta del eje x
+plt.ylabel('Respuesta')  # Etiqueta del eje y
+plt.title('Respuesta al escalón de una función de transferencia de segundo orden')  # Título del gráfico
+plt.grid(True)  # Habilita la cuadrícula en el gráfico
+plt.show()  # Muestra el gráfico
+
+# -------------------------------------> PUNTO 3C <-------------------------------------
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+def carga_descarga_RC(V, C, R, tiempo):
+    """
+    Calcula la carga o descarga de un circuito RC.
+
+    Parámetros:
+        V (float): Voltaje de la fuente en voltios.
+        C (float): Capacitancia en microfaradios.
+        R (float): Resistencia en ohmios.
+        tiempo (array): Array de tiempo en segundos.
+
+    Retorna:
+        voltajes (array): Array de voltajes en función del tiempo.
+    """
+    tau = R * C  # Constante de tiempo del circuito RC
+    voltajes = V * (1 - np.exp(-tiempo / tau))  # Ecuación de carga o descarga
+    return voltajes
+
+# Entrada de usuario
+V = float(input("Ingrese el valor del voltaje (V): "))
+C = float(input("Ingrese el valor de la capacitancia (μF): "))
+R = float(input("Ingrese el valor de la resistencia (Ω): "))
+
+# Definición del tiempo
+tiempo = np.linspace(0, 5 * R * C, 1000)  # Tiempo de 0 a 5*tau con 1000 puntos
+
+# Calcula los voltajes para carga y descarga
+voltajes_carga = carga_descarga_RC(V, C, R, tiempo)
+voltajes_descarga = carga_descarga_RC(0, C, R, tiempo)
+
+# Graficar
+plt.figure(figsize=(10, 6))
+plt.plot(tiempo, voltajes_carga, label='Carga', color='blue')
+plt.plot(tiempo, voltajes_descarga, label='Descarga', color='red', linestyle='--')
+plt.title('Carga y Descarga de un Circuito RC')
+plt.xlabel('Tiempo (s)')
+plt.ylabel('Voltaje (V)')
+plt.legend()
+plt.grid(True)
+plt.show()
+
+# -------------------------------------> PUNTO 4C <-------------------------------------
+
+# Solicitar al usuario las coordenadas del vector
+x = float(input("Ingrese la coordenada x del vector: "))
+y = float(input("Ingrese la coordenada y del vector: "))
+z = float(input("Ingrese la coordenada z del vector: "))
+
+# Crear figura y ejes 3D
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+
+# Dibujar el vector desde el origen hasta las coordenadas ingresadas
+ax.quiver(0, 0, 0, x, y, z, color='b', label='Vector')
+
+# Configurar límites de los ejes
+ax.set_xlim([0, max(x, 1)])
+ax.set_ylim([0, max(y, 1)])
+ax.set_zlim([0, max(z, 1)])
+
+# Etiquetas de los ejes
+ax.set_xlabel('X')
+ax.set_ylabel('Y')
+ax.set_zlabel('Z')
+
+# Mostrar leyenda y grilla
+ax.legend()
+ax.grid(True)
+
+# Mostrar el gráfico
+plt.show()
+
+# -------------------------------------> PUNTO 5 <-------------------------------------
+# Configuración del plot
+fig, ax = plt.subplots(figsize=(5, 3))
+ax.set_xlim(0, 6.5)
+ax.set_ylim(0, 16)
+ax.axis('off')
+
+# Dibujar las letras del nombre "jose"
+# Letra J
+ax.plot([0.8, 1.2], [3, 3], color='blue', linewidth=3)
+ax.plot([1, 1], [1.5, 3], color='blue', linewidth=3)
+ax.plot([1, 0.2], [1.5, 1.5], color='blue', linewidth=3)
+# Letra O
+ax.add_patch(plt.Circle((2, 2.25), 0.75, color='green', fill=False, linewidth=3))
+# Letra S
+ax.plot([3, 4], [3, 3], color='red', linewidth=3)
+ax.plot([3, 3], [3, 2.3], color='red', linewidth=3)
+ax.plot([3, 4], [2.25, 2.25], color='red', linewidth=3)
+ax.plot([4, 4], [2.2,1.5 ], color='red', linewidth=3)
+ax.plot([3, 4], [1.5, 1.5], color='red', linewidth=3)
+# Letra E
+ax.plot([4.3, 5], [3, 3], color='purple', linewidth=3)
+ax.plot([4.3, 5], [2.25, 2.25], color='purple', linewidth=3)
+ax.plot([4.3, 5], [1.5, 1.5], color='purple', linewidth=3)
+ax.plot([4.3, 4.3], [1.5, 3], color='purple', linewidth=3)
+
+# Dibujar las letras del nombre "cesar"
+# Letra C
+ax.plot([0.2, 0.2], [5, 7.5], color='blue', linewidth=3)
+ax.plot([0.2, 1], [5, 5], color='blue', linewidth=3)
+ax.plot([0.2, 1], [7.5, 7.5], color='blue', linewidth=3)
+# Letra E
+ax.plot([1.2, 2], [7.5, 7.5], color='purple', linewidth=3)
+ax.plot([1.2, 1.2], [7.5, 5], color='purple', linewidth=3)
+ax.plot([1.2, 2], [5, 5], color='purple', linewidth=3)
+ax.plot([1.2, 2], [6.4, 6.4], color='purple', linewidth=3)
+# Letra S
+ax.plot([2.3, 2.9], [7.5, 7.5], color='red', linewidth=3)
+ax.plot([2.3, 2.3], [7.5, 6.4], color='red', linewidth=3)
+ax.plot([2.3, 2.9], [6.4, 6.4], color='red', linewidth=3)
+ax.plot([2.9, 2.9], [6.4, 5 ], color='red', linewidth=3)
+ax.plot([2.9, 2.3], [5, 5], color='red', linewidth=3)
+# Letra A
+ax.plot([3.2, 3.5], [5, 7.5], color='purple', linewidth=3)
+ax.plot([3.5, 3.8], [7.5, 5], color='purple', linewidth=3)
+ax.plot([3.4, 3.6], [6.3, 6.3], color='purple', linewidth=3)
+# Letra R
+ax.plot([4, 4], [5, 7.5], color='green', linewidth=3)
+ax.plot([4, 4.55], [7.5, 7.5], color='green', linewidth=3)
+ax.plot([4.55, 4.55], [6.4, 7.5], color='green', linewidth=3)
+ax.plot([4, 4.55], [6.4, 6.4], color='green', linewidth=3)
+ax.plot([4, 4.55], [6.4, 5], color='green', linewidth=3)
+
+# Dibujar las letras del nombre "MIGUEL"
+# Letra M
+ax.plot([0.2, 0.2], [8.5, 11], color='blue', linewidth=3)
+ax.plot([0.2,0.5], [11, 10], color='blue', linewidth=3)
+ax.plot([0.5, 0.8], [10, 11], color='blue', linewidth=3)
+ax.plot([0.8, 0.8], [8.5, 11], color='blue', linewidth=3)
+# Letra I
+ax.plot([1.2, 1.2], [8.5, 11], color='purple', linewidth=3)
+# Letra G
+ax.plot([1.5, 1.5], [8.5, 11], color='red', linewidth=3)
+ax.plot([1.5, 1.9], [8.5, 8.5], color='red', linewidth=3)
+ax.plot([1.9, 1.9], [8.5, 10], color='red', linewidth=3)
+ax.plot([1.9, 1.5], [10, 10 ], color='red', linewidth=3)
+ax.plot([1.5, 1.9], [11, 11], color='red', linewidth=3)
+# Letra U
+ax.plot([2.2, 2.2], [8.5, 11], color='purple', linewidth=3)
+ax.plot([2.2, 2.6], [8.5, 8.5], color='purple', linewidth=3)
+ax.plot([2.6, 2.6], [8.5, 11], color='purple', linewidth=3)
+# Letra E
+ax.plot([2.9,2.9], [8.5, 11], color='green', linewidth=3)
+ax.plot([2.9, 3.2], [8.5, 8.5], color='green', linewidth=3)
+ax.plot([2.9, 3.2], [9.8, 9.8], color='green', linewidth=3)
+ax.plot([2.9, 3.2], [11, 11], color='green', linewidth=3)
+# Letra L
+ax.plot([3.5, 3.5], [8.5, 11], color='blue', linewidth=3)
+ax.plot([3.5, 3.8], [8.5, 8.5], color='blue', linewidth=3)
+
+# Dibujar las letras del nombre "SANTIAGO"
+# Letra S
+ax.plot([0.2, 0.8], [12.5, 12.5], color='blue', linewidth=3)
+ax.plot([0.8,0.2], [13.5, 13.5], color='blue', linewidth=3)
+ax.plot([0.8, 0.8], [12.5, 13.5], color='blue', linewidth=3)
+ax.plot([0.2, 0.2], [13.5, 14.5], color='blue', linewidth=3)
+ax.plot([0.2, 0.8], [14.5, 14.5], color='blue', linewidth=3)
+# Letra A
+ax.plot([1.5, 1.2], [14.5, 12.5], color='purple', linewidth=3)
+ax.plot([1.5, 1.8], [14.5, 12.5], color='purple', linewidth=3)
+ax.plot([1.4, 1.6], [13.5, 13.5], color='purple', linewidth=3)
+# Letra N
+ax.plot([2.1, 2.1], [14.5, 12.5], color='red', linewidth=3)
+ax.plot([2.1, 2.5], [14.5, 12.5], color='red', linewidth=3)
+ax.plot([2.5, 2.5], [14.5,12.5 ], color='red', linewidth=3)
+# Letra T
+ax.plot([2.7,3.1], [14.5, 14.5], color='green', linewidth=3)
+ax.plot([2.9, 2.9], [14.5, 12.5], color='green', linewidth=3)
+# Letra I
+ax.plot([3.3, 3.3], [14.5, 12.5], color='blue', linewidth=3)
+# Letra A
+ax.plot([3.9, 3.6], [14.5, 12.5], color='purple', linewidth=3)
+ax.plot([3.9, 4.2], [14.5, 12.5], color='purple', linewidth=3)
+ax.plot([3.9, 4], [13.5, 13.5], color='purple', linewidth=3)
+# Letra G
+ax.plot([4.5,4.5], [12.5, 14.5], color='green', linewidth=3)
+ax.plot([4.5, 4.9], [12.5, 12.5], color='green', linewidth=3)
+ax.plot([4.9, 4.9], [13.5, 12.5], color='green', linewidth=3)
+ax.plot([4.5, 4.9], [13.5, 13.5], color='green', linewidth=3)
+ax.plot([4.5, 4.9], [14.5, 14.5], color='green', linewidth=3)
+# Letra O
+ax.add_patch(plt.Circle((5.7, 13.5), 0.6, color='red', fill=False, linewidth=3))
+
+plt.show()
+
+# ---------------------------> PUNTO 6C <-------------------------------------
+
+# Cargar las imágenes
+image1 = cv2.imread('C:\\Users\\ADMIN\\Desktop\\ALGORITMOS ROBOTICOS\\Chevrolet.jpg')
+image2 = cv2.imread('C:\\Users\\ADMIN\\Desktop\\ALGORITMOS ROBOTICOS\\mazda.jpg')
+# Convertir las imágenes a escala de grises
+gray1 = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
+gray2 = cv2.cvtColor(image2, cv2.COLOR_BGR2GRAY)
+
+# Aplicar umbral binario
+_, thresh1 = cv2.threshold(gray1, 240, 255, cv2.THRESH_BINARY)
+_, thresh2 = cv2.threshold(gray2, 240, 255, cv2.THRESH_BINARY)
+
+# Encontrar contornos en las imágenes binarias
+contours1, _ = cv2.findContours(thresh1, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+contours2, _ = cv2.findContours(thresh2, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+# Imprimir coordenadas CHEVROLET
+for contour in contours1:
+    # Obtener los puntos extremos del contorno
+    x, y, w, h = cv2.boundingRect(contour)
+    # Dibujar un rectángulo alrededor del contorno en la primera imagen
+    cv2.rectangle(image1, (x, y), (x + w, y + h), (0, 255, 0), 2)
+    # Mostrar las coordenadas del rectángulo en la primera imagen
+    print("Coordenadas X e Y del contorno CHEVROLET:", x, y)
+
+# Imprimir coordenadas MAZDA
+for contour in contours2:
+    # Obtener los puntos extremos del contorno
+    x, y, w, h = cv2.boundingRect(contour)
+    # Dibujar un rectángulo alrededor del contorno en la segunda imagen
+    cv2.rectangle(image2, (x, y), (x + w, y + h), (0, 255, 0), 2)
+    # Mostrar las coordenadas del rectángulo en la segunda imagen
+    print("Coordenadas X e Y del contorno MAZDA:", x, y)
+
+# Mostrar las imágenes con los rectángulos dibujados
+cv2.imshow('Chevrolet', image1)
+cv2.imshow('Mazda', image2)
+cv2.waitKey(0)
+cv2.destroyAllWindows()

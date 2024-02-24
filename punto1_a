@@ -1,0 +1,241 @@
+import numpy as np
+import math
+
+# PUNTO 1
+
+# Vectores inicializados
+vector1 = [1, 2, 3]  # Vector 1
+vector2 = [4, 5, 6]  # Vector 2
+
+# Suma de vectores
+suma = [vector1[i] + vector2[i] for i in range(len(vector1))]  # Suma componente a componente
+print("Suma de vectores:", suma)
+
+# Resta de vectores
+resta = [vector1[i] - vector2[i] for i in range(len(vector1))]  # Resta componente a componente
+print("Resta de vectores:", resta)
+
+# Producto punto
+producto_punto = sum(vector1[i] * vector2[i] for i in range(len(vector1)))  # Producto punto
+print("Producto punto:", producto_punto)
+
+# Producto cruz
+producto_cruz = [
+    vector1[1] * vector2[2] - vector1[2] * vector2[1],  # Componente x del producto cruz
+    vector1[2] * vector2[0] - vector1[0] * vector2[2],  # Componente y del producto cruz
+    vector1[0] * vector2[1] - vector1[1] * vector2[0]   # Componente z del producto cruz
+]
+
+# División de vectores elemento a elemento
+division = [vector1[i] / vector2[i] for i in range(len(vector1))]
+
+# Imprimir el resultado
+print("División de vectores:")
+print(division)
+
+#PUNTO 2
+
+# Matrices inicializadas
+matriz1 = [[1, 2, 3],
+           [4, 5, 6],
+           [7, 8, 9]]
+
+matriz2 = [[9, 8, 7],
+           [6, 5, 4],
+           [3, 2, 1]]
+
+# Suma de matrices
+suma_matriz = [[matriz1[i][j] + matriz2[i][j] for j in range(len(matriz1[0]))] for i in range(len(matriz1))]
+print("Suma de matrices:")
+for fila in suma_matriz:
+    print(fila)
+
+# Resta de matrices
+resta_matriz = [[matriz1[i][j] - matriz2[i][j] for j in range(len(matriz1[0]))] for i in range(len(matriz1))]
+print("\nResta de matrices:")
+for fila in resta_matriz:
+    print(fila)
+
+# Producto punto
+producto_punto = sum(matriz1[i][j] * matriz2[i][j] for i in range(len(matriz1)) for j in range(len(matriz1[0])))
+print("\nProducto punto:", producto_punto)
+
+# Producto cruz (para matrices 3x3)
+producto_cruz = [
+    # Fila 1 del producto cruz
+    [matriz1[1][2] * matriz2[2][1] - matriz1[2][1] * matriz2[1][2],  # Calcula el componente (1,1) del producto cruz
+     matriz1[2][0] * matriz2[0][2] - matriz1[0][2] * matriz2[2][0],  # Calcula el componente (1,2) del producto cruz
+     matriz1[0][1] * matriz2[1][0] - matriz1[1][0] * matriz2[0][1]],  # Calcula el componente (1,3) del producto cruz
+    
+    # Fila 2 del producto cruz
+    [matriz1[2][1] * matriz2[1][0] - matriz1[1][0] * matriz2[2][1],  # Calcula el componente (2,1) del producto cruz
+     matriz1[0][2] * matriz2[2][0] - matriz1[2][0] * matriz2[0][2],  # Calcula el componente (2,2) del producto cruz
+     matriz1[1][0] * matriz2[0][1] - matriz1[0][1] * matriz2[1][0]],  # Calcula el componente (2,3) del producto cruz
+    
+    # Fila 3 del producto cruz
+    [matriz1[0][2] * matriz2[1][1] - matriz1[1][1] * matriz2[0][2],  # Calcula el componente (3,1) del producto cruz
+     matriz1[1][0] * matriz2[2][1] - matriz1[2][1] * matriz2[1][0],  # Calcula el componente (3,2) del producto cruz
+     matriz1[2][1] * matriz2[0][1] - matriz1[0][1] * matriz2[2][1]]   # Calcula el componente (3,3) del producto cruz
+]
+print("\nProducto cruz:")
+for fila in producto_cruz:
+    print(fila)
+
+# División de matrices (elemento a elemento)
+division = [[matriz1[i][j] / matriz2[i][j] for j in range(len(matriz1[0]))] for i in range(len(matriz1))]
+# La división se realiza componente a componente, dividiendo cada elemento de la matriz1 por el correspondiente elemento de la matriz2
+print("División de matrices:")
+for fila in division:
+    print(fila)    # Imprime cada fila de la matriz resultante de la división
+
+# PUNTO 3
+
+def cartesian_to_cylindrical(x, y, z):
+    rho = math.sqrt(x*2 + y*2)  # Distancia al origen en el plano xy
+    phi = math.atan2(y, x)         # Ángulo azimutal en el plano xy (en radianes)
+    z_cylindrical = z              # La coordenada z no cambia en coordenadas cilíndricas
+    return rho, phi, z_cylindrical
+
+def cartesian_to_spherical(x, y, z):
+    r = math.sqrt(x*2 + y*2 + z*2)  # Distancia al origen
+    theta = math.atan2(math.sqrt(x*2 + y*2), z)  # Ángulo zenital (en radianes)
+    phi = math.atan2(y, x)  # Ángulo azimutal en el plano xy (en radianes)
+    return r, theta, phi
+
+# Coordenadas rectangulares
+x = 1
+y = 1
+z = 1
+
+# Conversión a coordenadas cilíndricas
+rho, phi, z_cylindrical = cartesian_to_cylindrical(x, y, z)
+print("Coordenadas cilíndricas:")
+print("Rho:", rho)
+print("Phi:", phi)
+print("Z:", z_cylindrical)
+
+# Conversión a coordenadas esféricas
+r, theta, phi_spherical = cartesian_to_spherical(x, y, z)
+print("\nCoordenadas esféricas:")
+print("R:", r)
+print("Theta:", theta)
+print("Phi:", phi_spherical)
+
+# PUNTO 4
+
+"""Realice un programa para el cálculo de la resistencia de una RTD de platino (PT100) en función de
+la temperatura."""
+
+def calcular_resistencia_PT100(temperatura):
+    # Coeficientes de la ecuación de la resistencia para PT100 según la norma IEC 60751
+    A = 3.9083e-3 # Coeficiente de temperatura para el platino (PT100)
+    B = -5.775e-7 # Coeficiente de temperatura para el platino (PT100)
+    R0 = 100.0  # Resistencia nominal a 0°C en ohmios
+    
+    # Calcula la resistencia en función de la temperatura
+    resistencia = R0 * (1 + A * temperatura + B * temperatura**2)
+    return resistencia
+
+# Ejemplo de uso
+temperatura = 20.0  # Temperatura en grados Celsius
+resistencia = calcular_resistencia_PT100(temperatura)
+resistencia_redondeada = round(resistencia,2)
+print(f"La resistencia de una PT100 a {temperatura} grados C es {resistencia_redondeada} ohmios.")
+
+# PUNTO 5
+
+"""Realice en funciones las rotaciones en X, Y y Z, donde se tenga un parámetro de entrada (ángulo)
+y un parámetro de salida (matriz)."""
+
+def rotacion_x(angulo):
+    """
+    Calcula la matriz de rotación en el eje X dado un ángulo en radianes.
+    
+    Parámetros:
+        angulo (float): Ángulo de rotación en radianes.
+    
+    Retorna:
+        matriz (numpy.ndarray): Matriz de rotación en el eje X.
+    """
+    matriz = np.array([[1, 0, 0],
+                       [0, np.cos(angulo), -np.sin(angulo)],
+                       [0, np.sin(angulo), np.cos(angulo)]])
+    return matriz
+
+def rotacion_y(angulo):
+    """
+    Calcula la matriz de rotación en el eje Y dado un ángulo en radianes.
+    
+    Parámetros:
+        angulo (float): Ángulo de rotación en radianes.
+    
+    Retorna:
+        matriz (numpy.ndarray): Matriz de rotación en el eje Y.
+    """
+    matriz = np.array([[np.cos(angulo), 0, np.sin(angulo)],
+                       [0, 1, 0],
+                       [-np.sin(angulo), 0, np.cos(angulo)]])
+    return matriz
+
+def rotacion_z(angulo):
+    """
+    Calcula la matriz de rotación en el eje Z dado un ángulo en radianes.
+    
+    Parámetros:
+        angulo (float): Ángulo de rotación en radianes.
+    
+    Retorna:
+        matriz (numpy.ndarray): Matriz de rotación en el eje Z.
+    """
+    matriz = np.array([[np.cos(angulo), -np.sin(angulo), 0],
+                       [np.sin(angulo), np.cos(angulo), 0],
+                       [0, 0, 1]])
+    return matriz
+
+# Ejemplo de uso
+angulo = np.pi / 4  # Ángulo de rotación de 45 grados (en radianes)
+
+# Rotación en el eje X
+matriz_rotacion_x = rotacion_x(angulo)
+print("Matriz de rotación en el eje X:")
+print(matriz_rotacion_x)
+
+# Rotación en el eje Y
+matriz_rotacion_y = rotacion_y(angulo)
+print("\nMatriz de rotación en el eje Y:")
+print(matriz_rotacion_y)
+
+# Rotación en el eje Z
+matriz_rotacion_z = rotacion_z(angulo)
+print("\nMatriz de rotación en el eje Z:")
+print(matriz_rotacion_z)
+
+# PUNTO 6 
+
+def calcular_fuerza_avance(diametro, presion):
+    # Calcula el área del émbolo
+    area = math.pi * (diametro ** 2) / 4
+    # Calcula la fuerza de avance
+    fuerza = presion * area
+    return fuerza
+
+def calcular_fuerza_retroceso(diametro, presion):
+    # Calcula el área del émbolo
+    area = math.pi * (diametro ** 2) / 4
+    # Calcula la fuerza de retroceso (presión de retroceso asumida 1 atmósfera menor que la presión de trabajo)
+    fuerza = (presion - 1) * area
+    return fuerza
+
+# Datos del cilindro
+diametro_cilindro = 0.05  # en metros
+presion_trabajo = 117.568  # en psi
+
+# Cálculo de fuerza de avance
+fuerza_avance_cilindro = calcular_fuerza_avance(diametro_cilindro, presion_trabajo)
+print(f"Fuerza de avance del cilindro: {fuerza_avance_cilindro:.2f} N")
+
+# Cálculo de fuerza de retroceso
+fuerza_retroceso_cilindro = calcular_fuerza_retroceso(diametro_cilindro, presion_trabajo)
+print(f"Fuerza de retroceso del cilindro: {fuerza_retroceso_cilindro:.2f} N")
+
+#FIN DEL PROGRAMA 1A
