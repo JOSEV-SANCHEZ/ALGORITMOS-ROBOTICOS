@@ -130,18 +130,24 @@ def calcular_resistencia_PT100(temperatura):
     # Coeficientes de la ecuación de la resistencia para PT100 según la norma IEC 60751
     A = 3.9083e-3 # Coeficiente de temperatura para el platino (PT100)
     B = -5.775e-7 # Coeficiente de temperatura para el platino (PT100)
+    C = -4.183e-12 # Coeficiente de 
     R0 = 100.0  # Resistencia nominal a 0°C en ohmios
     
-    # Calcula la resistencia en función de la temperatura
-    resistencia = R0 * (1 + A * temperatura + B * temperatura**2)
+    # Verifica si la temperatura es negativa
+    if temperatura < 0:
+        # Calcula la resistencia en función de la temperatura negativa
+        resistencia = R0 * (1 + A * temperatura + B * temperatura*2 + C *(temperatura-100) *temperatura*3)
+    else:
+        # Calcula la resistencia en función de la temperatura positiva
+        resistencia = R0 * (1 + A * temperatura + B * temperatura**2 )
+    
     return resistencia
 
 # Ejemplo de uso
-temperatura = 20.0  # Temperatura en grados Celsius
+temperatura = -200  # Temperatura en grados Celsius (negativa en este caso)
 resistencia = calcular_resistencia_PT100(temperatura)
 resistencia_redondeada = round(resistencia,2)
 print(f"La resistencia de una PT100 a {temperatura} grados C es {resistencia_redondeada} ohmios.")
-
 # PUNTO 5
 
 """Realice en funciones las rotaciones en X, Y y Z, donde se tenga un parámetro de entrada (ángulo)
@@ -211,31 +217,30 @@ print("\nMatriz de rotación en el eje Z:")
 print(matriz_rotacion_z)
 
 # PUNTO 6 
+import numpy as np
+import math
 
-def calcular_fuerza_avance(diametro, presion):
-    # Calcula el área del émbolo
-    area = math.pi * (diametro ** 2) / 4
-    # Calcula la fuerza de avance
-    fuerza = presion * area
-    return fuerza
+def area_embolo(radio_embolo):
+    return math.pi * radio_embolo**2
 
-def calcular_fuerza_retroceso(diametro, presion):
-    # Calcula el área del émbolo
-    area = math.pi * (diametro ** 2) / 4
-    # Calcula la fuerza de retroceso (presión de retroceso asumida 1 atmósfera menor que la presión de trabajo)
-    fuerza = (presion - 1) * area
-    return fuerza
+def area_vastago(radio_vastago):
+    return math.pi * radio_vastago**2
 
-# Datos del cilindro
-diametro_cilindro = 0.05  # en metros
-presion_trabajo = 117.568  # en psi
+def fuerza_avance(presion, radio_embolo):
+    return area_embolo(radio_embolo) * presion
 
-# Cálculo de fuerza de avance
-fuerza_avance_cilindro = calcular_fuerza_avance(diametro_cilindro, presion_trabajo)
-print(f"Fuerza de avance del cilindro: {fuerza_avance_cilindro:.2f} N")
+def fuerza_retroceso(presion, radio_embolo, radio_vastago):
+    return (area_embolo(radio_embolo) - area_vastago(radio_vastago)) * presion
 
-# Cálculo de fuerza de retroceso
-fuerza_retroceso_cilindro = calcular_fuerza_retroceso(diametro_cilindro, presion_trabajo)
-print(f"Fuerza de retroceso del cilindro: {fuerza_retroceso_cilindro:.2f} N")
+# Valores de ejemplo
+presion = 100 # Presión en unidades de presión estándar
+radio_embolo = 0.05 # Radio del émbolo en metros
+radio_vastago = 0.02 # Radio del vástago en metros
 
+# Cálculo de fuerza de avance y retroceso
+fuerza_avance = fuerza_avance(presion, radio_embolo)
+fuerza_retroceso = fuerza_retroceso(presion, radio_embolo, radio_vastago)
+
+print(f"Fuerza de avance: {fuerza_avance} N")
+print(f"Fuerza de retroceso: {fuerza_retroceso} N")
 #FIN DEL PROGRAMA 1A
